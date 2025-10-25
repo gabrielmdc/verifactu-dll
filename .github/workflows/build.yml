@@ -1,0 +1,99 @@
+name: build
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore
+        run: dotnet restore VerifactuDll.csproj
+
+      - name: Build (net9.0 + net9.0-windows)
+        run: dotnet build VerifactuDll.csproj -c Release --no-restore
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: verifactu-dll
+          path: |
+            bin/Release/net9.0/VerifactuDll.dll
+            bin/Release/net9.0/VerifactuDll.pdb
+            bin/Release/net9.0-windows/win-x64/VerifactuDll.dll
+            bin/Release/net9.0-windows/win-x64/VerifactuDll.comhost.dll
+          if-no-files-found: warn
+
+  # Optional job to test COM registration on Windows
+  com-registration-test:
+    name: COM Registration Test
+    needs: build-linux
+    runs-on: windows-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+            name: verifactu-dll
+
+
+      - name: Register COM host
+        shell: pwsh
+        run: |
+          $dll = Get-ChildItem -Recurse -Filter VerifactuDll.comhost.dll | Select-Object -First 1
+          if (-not $dll) { Write-Error "comhost DLL not found"; exit 1 }
+          regsvr32 /s $dll.FullName
+          Write-Host "Registered: $($dll.FullName)"
+
+      - name: Register COM host
+        shell: pwsh
+        run: |
+          $dll = Get-ChildItem -Recurse -Filter VerifactuDll.comhost.dll | Select-Object -First 1
+          if (-not $dll) { Write-Error "comhost DLL not found"; exit 1 }
+          regsvr32 /s $dll.FullName
+          Write-Host "Registered: $($dll.FullName)"
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build-linux, com-registration-test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: verifactu-dll
+          path: artifact
+      - name: Zip
+        run: |
+          mkdir dist
+          zip -j dist/verifactu-dll-${{ github.ref_name }}.zip artifact/*
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+      - name: Upload asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/verifactu-dll-${{ github.ref_name }}.zip
+          asset_name: verifactu-dll-${{ github.ref_name }}.zip
+          asset_content_type: application/zip
