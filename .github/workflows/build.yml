@@ -1,5 +1,8 @@
 name: build
 
+permissions:
+  contents: write
+
 on:
   pull_request:
   push:
@@ -29,12 +32,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: verifactu-dll
-          path: |
-            bin/Release/net9.0/VerifactuDll.dll
-            bin/Release/net9.0/VerifactuDll.pdb
-            bin/Release/net9.0-windows/win-x64/VerifactuDll.dll
-            bin/Release/net9.0-windows/win-x64/VerifactuDll.comhost.dll
-          if-no-files-found: warn
+          path: bin/Release
+          if-no-files-found: error
 
   # Optional job to test COM registration on Windows
   com-registration-test:
@@ -46,6 +45,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
             name: verifactu-dll
+            path: artifact
 
       - name: Register COM host
         shell: pwsh
@@ -60,32 +60,37 @@ jobs:
     needs: [build-linux, com-registration-test]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
         with:
           name: verifactu-dll
           path: artifact
+
       - name: List artifact
         run: find artifact -type f -maxdepth 3
+
       - name: Zip
         run: |
           mkdir dist
-          zip -j dist/verifactu-dll-${{ github.ref_name }}.zip artifact/*
+          zip -r dist/verifactu-dll-${{ github.run_number }}.zip artifact
+      
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_name }}
-          release_name: ${{ github.ref_name }}
+          tag_name: build-${{ github.run_number }}
+          release_name: build-${{ github.run_number }}
           draft: false
           prerelease: false
+      
       - name: Upload asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/verifactu-dll-${{ github.ref_name }}.zip
-          asset_name: verifactu-dll-${{ github.ref_name }}.zip
+          asset_path: dist/verifactu-dll-${{ github.run_number }}.zip
+          asset_name: verifactu-dll-${{ github.run_number }}.zip
           asset_content_type: application/zip
