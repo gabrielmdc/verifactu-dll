@@ -48,15 +48,6 @@ jobs:
         with:
             name: verifactu-dll
 
-
-      - name: Register COM host
-        shell: pwsh
-        run: |
-          $dll = Get-ChildItem -Recurse -Filter VerifactuDll.comhost.dll | Select-Object -First 1
-          if (-not $dll) { Write-Error "comhost DLL not found"; exit 1 }
-          regsvr32 /s $dll.FullName
-          Write-Host "Registered: $($dll.FullName)"
-
       - name: Register COM host
         shell: pwsh
         run: |
@@ -73,7 +64,6 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: verifactu-dll
-          path: artifact
       - name: Zip
         run: |
           mkdir dist
