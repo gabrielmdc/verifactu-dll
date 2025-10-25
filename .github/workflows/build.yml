@@ -64,6 +64,8 @@ jobs:
         with:
           name: verifactu-dll
           path: artifact
+      - name: List artifact
+        run: find artifact -type f -maxdepth 3
       - name: Zip
         run: |
           mkdir dist
