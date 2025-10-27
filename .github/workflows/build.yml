@@ -26,7 +26,7 @@ jobs:
         run: dotnet restore VerifactuDll.csproj
 
       - name: Build (net9.0 + net9.0-windows)
-        run: dotnet build VerifactuDll.csproj -c Release --no-restore
+        run: dotnet publish VerifactuDll.csproj -c Release -f net9.0-windows --self-contained --no-restore
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -50,7 +50,7 @@ jobs:
       - name: Register COM host
         shell: pwsh
         run: |
-          $dll = Get-ChildItem -Recurse -Filter VerifactuDll.comhost.dll | Select-Object -First 1
+          $dll = Resolve-Path 'artifact/bin/Release/net9.0-windows/win-x64/publish/VerifactuDll.comhost.dll'
           if (-not $dll) { Write-Error "comhost DLL not found"; exit 1 }
           regsvr32 /s $dll.FullName
           Write-Host "Registered: $($dll.FullName)"
