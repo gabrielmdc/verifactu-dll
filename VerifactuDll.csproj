@@ -1,13 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <!-- Multi-target with modern .NET plus a Windows-specific TFM for COM host. -->
   <PropertyGroup>
     <TargetFrameworks>net9.0;net9.0-windows</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <LangVersion>latest</LangVersion>
-    <!-- Optional: keep versioning simple for now. -->
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
     <Version>1.0.0</Version>
@@ -25,7 +22,4 @@
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <!-- Add <EnableWindowsTargeting>true</EnableWindowsTargeting> if you want to compile Windows-specific APIs from non-Windows machines. -->
   </PropertyGroup>
-
-  <!-- No explicit assembly attribute needed; using ComVisible property for Windows target only. -->
-
 </Project>
