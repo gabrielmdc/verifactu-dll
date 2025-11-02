@@ -1,31 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <!-- Multi-target with modern .NET plus a Windows-specific TFM for COM host. -->
   <PropertyGroup>
-    <TargetFrameworks>net9.0;net9.0-windows</TargetFrameworks>
+    <TargetFrameworks>net9.0;net48</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <LangVersion>latest</LangVersion>
-    <!-- Optional: keep versioning simple for now. -->
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
-    <Version>1.0.0</Version>
-    <Authors>verifactu</Authors>
-    <Company>verifactu</Company>
-    <Description>Verifactu sample library with COM exposure on Windows.</Description>
-    <PackageTags>verifactu;com;interop</PackageTags>
+    <Authors>Gabriel Mateos</Authors>
+    <Description>Verifactu library (net9 + net48 COM legacy).</Description>
   </PropertyGroup>
 
-  <!-- Ensure we build a Windows-x64 RID so the comhost can be registered. Add more RIDs if needed. -->
-  <PropertyGroup Condition="'$(TargetFramework)'=='net9.0-windows'">
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <EnableComHosting>true</EnableComHosting>
+  <PropertyGroup Condition="'$(TargetFramework)'=='net48'">
     <ComVisible>true</ComVisible>
-    <EnableWindowsTargeting>true</EnableWindowsTargeting>
-    <!-- Add <EnableWindowsTargeting>true</EnableWindowsTargeting> if you want to compile Windows-specific APIs from non-Windows machines. -->
+    <PlatformTarget>x86</PlatformTarget>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
-
-  <!-- No explicit assembly attribute needed; using ComVisible property for Windows target only. -->
-
 </Project>
