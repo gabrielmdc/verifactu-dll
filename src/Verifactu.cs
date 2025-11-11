@@ -1,12 +1,11 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using System.Text.Encodings.Web;
 
 namespace VerifactuDll;
 
 public class Verifactu
 {
-	// Returns lowercase hex SHA-256 of the UTF-8 bytes of msg (Base16(false) equivalent)
+	// Returns lowercase hex SHA-256 of the UTF-8 bytes of msg
 	private static string GetMessageHash(string msg)
 	{
 		using var sha256 = SHA256.Create();
@@ -40,16 +39,16 @@ public class Verifactu
 
 	private static String GetFieldValue(String name, String value)
 	{
-		var field = name + "=" + UrlEncoder.Default.Encode(value);
+		var field = name + "=" + value;
 
 		return field;
 	}
 
-	public static String GetVerifactuHash(String nifEmisor, String numFacturaSerie, DateOnly fechaExpedicion,
+	public static String GetVerifactuHash(String nifEmisor, String numFacturaSerie, DateTime fechaExpedicion,
 		String tipoFactura, String cuotaTotal, String importeTotal, String huellaAnterior, DateTime fechaHoraUsoRegistro)
 	{
 		String str = GetReferenciaRegistroAlta(nifEmisor, numFacturaSerie,
-			fechaExpedicion.ToString("yyyy-MM-dd"), tipoFactura, cuotaTotal, importeTotal,
+			fechaExpedicion.ToString("dd-MM-yyyy"), tipoFactura, cuotaTotal, importeTotal,
 			huellaAnterior, fechaHoraUsoRegistro.ToString("yyyy-MM-ddTHH:mm:ss"));
 
 		return GetMessageHash(str);
