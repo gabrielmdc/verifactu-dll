@@ -24,7 +24,7 @@ public class Verifactu
 		return sb.ToString();
 	}
 
-	public static String GetReferenciaRegistroAlta(String nifEmisor, String numFacturaSerie, String fechaExpedicion, String tipoFactura, String cuotaTotal, String importeTotal, String huellaAnterior, String fechaHoraUsoRegistro)
+	private static String GetReferenciaRegistroAlta(String nifEmisor, String numFacturaSerie, String fechaExpedicion, String tipoFactura, String cuotaTotal, String importeTotal, String huellaAnterior, String fechaHoraUsoRegistro)
 	{
 		var fieldList = new[]
 		{

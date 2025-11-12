@@ -9,7 +9,7 @@ namespace VerifactuDll
 	public interface IVerifactu
 	{
 		[DispId(1)]
-		string Echo(string input);
+		string getHash(string msg);
 	}
 	// Clase COM visible
 	[Guid("e847e560-fc0a-4937-9e77-8c9a2bf97f1e")]
@@ -18,6 +18,6 @@ namespace VerifactuDll
 	[ProgId("Verifactu.VerifactuComClass")]
 	public class VerifactuComClass : IVerifactu
 	{
-		public string Echo(string input) => $"Echo: {input}";
+		public string getHash(string msg) => Verifactu.GetMessageHash(msg);
 	}
 }
