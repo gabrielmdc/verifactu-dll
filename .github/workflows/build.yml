@@ -23,13 +23,13 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Build (net9.0)
-        run: dotnet build VerifactuDll.csproj -c Release -f net9.0
+        run: dotnet build src/VerifactuDll.csproj -c Release -f net9.0
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: verifactu-net9
-          path: bin/Release/net9.0
+          path: src/bin/Release/net9.0
           if-no-files-found: error
 
   build-net48-windows:
@@ -45,13 +45,13 @@ jobs:
           dotnet-version: 8.0.x
       
       - name: Build (net48)
-        run: dotnet build VerifactuDll.csproj -c Release -f net48
+        run: dotnet build src/VerifactuDll.csproj -c Release -f net48
       
       - name: COM Registration Test
         shell: pwsh
         run: |
           $regasm = "$env:SystemRoot\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe"
-          & $regasm ".\bin\Release\net48\VerifactuDll.dll" /tlb /codebase
+          & $regasm ".\src\bin\Release\net48\VerifactuDll.dll" /tlb /codebase
           Write-Host "Registrado OK"  
 
       - name: Upload artifacts
