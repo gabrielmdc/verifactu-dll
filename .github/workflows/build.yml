@@ -51,7 +51,7 @@ jobs:
         shell: pwsh
         run: |
           $regasm = "$env:SystemRoot\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe"
-          & $regasm ".\bin\Release\net48\VerifactuDll.dll" /tlb /codebase
+          & $regasm ".\src\bin\Release\net48\VerifactuDll.dll" /tlb /codebase
           Write-Host "Registrado OK"  
 
       - name: Upload artifacts
