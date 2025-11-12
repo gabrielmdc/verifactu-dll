@@ -1,23 +1,23 @@
 using System.Runtime.InteropServices;
 
-namespace VerifactuDll
+namespace Sha256HelperDll
 {
 	// Dual para early + late binding
-	[Guid("be6df6c0-28f6-4d89-94bf-22cbae73bb49")]
+	[Guid("e022405d-2039-407b-aff8-f784f6b66063")]
 	[InterfaceType(ComInterfaceType.InterfaceIsDual)]
 	[ComVisible(true)]
-	public interface IVerifactu
+	public interface ISha256Helper
 	{
 		[DispId(1)]
 		string getHash(string msg);
 	}
 	// Clase COM visible
-	[Guid("e847e560-fc0a-4937-9e77-8c9a2bf97f1e")]
+	[Guid("98897e60-b8fe-4b01-9f3b-548d34ad3968")]
 	[ClassInterface(ClassInterfaceType.None)]
 	[ComVisible(true)]
-	[ProgId("Verifactu.VerifactuComClass")]
-	public class VerifactuComClass : IVerifactu
+	[ProgId("Sha256Helper.Sha256HelperComClass")]
+	public class Sha256HelperComClass : ISha256Helper
 	{
-		public string getHash(string msg) => Verifactu.GetMessageHash(msg);
+		public string getHash(string msg) => Sha256Helper.GetMessageHash(msg);
 	}
 }
