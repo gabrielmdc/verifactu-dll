@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <Authors>Gabriel Mateos</Authors>
-    <Description>Verifactu library (net9 + net48 COM legacy).</Description>
+    <Description>Sha256Helper library (net9 + net48 COM legacy).</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TargetFramework)'=='net48'">

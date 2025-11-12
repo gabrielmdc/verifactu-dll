@@ -10,6 +10,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore tests/tests.csproj
+
+      - name: Run tests
+        run: dotnet test tests/tests.csproj --verbosity normal
   build-linux:
     name: Build .NET 9.0 (Linux)
     runs-on: ubuntu-latest
@@ -23,12 +40,12 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Build (net9.0)
-        run: dotnet build src/VerifactuDll.csproj -c Release -f net9.0
+        run: dotnet build src/Sha256HelperDll.csproj -c Release -f net9.0
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: verifactu-net9
+          name: sha256helper-net9
           path: src/bin/Release/net9.0
           if-no-files-found: error
 
@@ -45,19 +62,19 @@ jobs:
           dotnet-version: 8.0.x
       
       - name: Build (net48)
-        run: dotnet build src/VerifactuDll.csproj -c Release -f net48
+        run: dotnet build src/Sha256HelperDll.csproj -c Release -f net48
       
       - name: COM Registration Test
         shell: pwsh
         run: |
           $regasm = "$env:SystemRoot\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe"
-          & $regasm ".\src\bin\Release\net48\VerifactuDll.dll" /tlb /codebase
+          & $regasm ".\src\bin\Release\net48\Sha256HelperDll.dll" /tlb /codebase
           Write-Host "Registrado OK"  
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: verifactu-net48
+          name: sha256helper-net48
           path: src/bin/Release/net48
 
   release:
@@ -68,13 +85,13 @@ jobs:
       - name: Download net9 artifact
         uses: actions/download-artifact@v4
         with:
-          name: verifactu-net9
+          name: sha256helper-net9
           path: artifact/net9
 
       - name: Download net48 artifact
         uses: actions/download-artifact@v4
         with:
-          name: verifactu-net48
+          name: sha256helper-net48
           path: artifact/net48
 
       - name: List artifact
@@ -83,7 +100,7 @@ jobs:
       - name: Zip
         run: |
           mkdir dist
-          zip -r dist/verifactu-dll-${{ github.run_number }}.zip artifact
+          zip -r dist/sha256helper-dll-${{ github.run_number }}.zip artifact
       
       - name: Create release
         id: create_release
@@ -102,6 +119,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/verifactu-dll-${{ github.run_number }}.zip
-          asset_name: verifactu-dll-${{ github.run_number }}.zip
+          asset_path: dist/sha256helper-dll-${{ github.run_number }}.zip
+          asset_name: sha256helper-dll-${{ github.run_number }}.zip
           asset_content_type: application/zip
