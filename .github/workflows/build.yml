@@ -26,7 +26,7 @@ jobs:
         run: dotnet restore tests/tests.csproj
 
       - name: Run tests
-        run: dotnet test tests/tests.csproj --no-build --verbosity normal
+        run: dotnet test tests/tests.csproj --verbosity normal
   build-linux:
     name: Build .NET 9.0 (Linux)
     runs-on: ubuntu-latest
